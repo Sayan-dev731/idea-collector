@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Campus Ideas Hub — Sustainability & Innovation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Optional: Add MSAL and Graph SDK locally if you have them.
+       Keep placeholders here if you’ll integrate later. -->
+  <!-- <script src="msal.min.js"></script> -->
+  <!-- <script src="graph.min.js"></script> -->
+</head>
+<body>
+  <header class="app-header">
+    <h1>Campus Ideas Hub</h1>
+    <p>Collect, organize, and summarize student ideas on sustainability and innovation — powered by Microsoft.</p>
+  </header>
+
+  <nav class="navbar">
+    <button class="nav-btn" data-target="home">Home</button>
+    <button class="nav-btn" data-target="submit">Submit idea</button>
+    <button class="nav-btn" data-target="dashboard">Admin dashboard</button>
+    <button class="nav-btn" data-target="summary">Summary</button>
+    <div class="auth">
+      <button id="btnSignIn" class="auth-btn">Sign in with Microsoft</button>
+      <button id="btnSignOut" class="auth-btn secondary">Sign out</button>
+    </div>
+  </nav>
+
+  <main class="container">
+
+    <!-- Home -->
+    <section id="home" class="view active">
+      <div class="card">
+        <h2>About the initiative</h2>
+        <p>Colleges often struggle to organize and summarize large volumes of student ideas. This app streamlines collection (via Microsoft Forms), centralizes storage (SharePoint/Excel), and creates judge-friendly summaries — all inside the Microsoft ecosystem.</p>
+        <ul class="features">
+          <li><strong>Microsoft Forms:</strong> Structured student submissions with categories.</li>
+          <li><strong>SharePoint/Excel:</strong> Secure storage with metadata.</li>
+          <li><strong>Power BI:</strong> Visual dashboards for decision-making.</li>
+          <li><strong>Copilot:</strong> Quick summaries for judges and faculty.</li>
+        </ul>
+        <div class="tip">
+          <strong>Tip:</strong> Sign in with your Microsoft account to sync data with SharePoint/Excel via Graph API. Otherwise, data saves locally in your browser for demo.
+        </div>
+      </div>
+    </section>
+
+    <!-- Submit -->
+    <section id="submit" class="view">
+      <div class="grid-two">
+        <div class="card">
+          <h2>Submit via Microsoft Forms</h2>
+          <p>Recommended for production. Replace the iframe src with your form’s embed URL.</p>
+          <div class="iframe-wrap">
+            <!-- TODO: Replace YOUR_FORM_EMBED_URL with the Microsoft Forms embed URL -->
+            <iframe title="Microsoft Forms" src="https://forms.office.com/r/FCA1Lz7zWy" frameborder="0" allowfullscreen></iframe>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>Fallback local form (demo)</h2>
+          <form id="ideaForm">
+            <div class="form-row">
+              <label for="name">Name</label>
+              <input type="text" id="name" required />
+            </div>
+            <div class="form-row">
+              <label for="email">Email</label>
+              <input type="email" id="email" required />
+            </div>
+            <div class="form-row">
+              <label for="title">Idea title</label>
+              <input type="text" id="title" required />
+            </div>
+            <div class="form-row">
+              <label for="desc">Idea description</label>
+              <textarea id="desc" rows="5" required></textarea>
+            </div>
+            <div class="form-row">
+              <label for="category">Category</label>
+              <select id="category" required>
+                <option value="">Select a category</option>
+                <option>Energy</option>
+                <option>Waste</option>
+                <option>Innovation</option>
+                <option>Social Impact</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label for="impact">Impact (1-5)</label>
+              <input type="number" id="impact" min="1" max="5" />
+            </div>
+            <div class="form-row">
+              <label for="feasibility">Feasibility (1-5)</label>
+              <input type="number" id="feasibility" min="1" max="5" />
+            </div>
+            <div class="form-row">
+              <label for="file">Optional file upload</label>
+              <input type="file" id="file" />
+            </div>
+
+            <button type="submit" class="primary">Submit idea</button>
+            <p class="small">Note: In demo mode, ideas are stored in your browser. When signed in, ideas can be written to Excel/SharePoint via Graph (configure in app.js).</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dashboard -->
+    <section id="dashboard" class="view">
+      <div class="card">
+        <h2>Admin dashboard</h2>
+        <div class="actions">
+          <button id="btnSyncFromGraph" class="secondary">Sync from Microsoft Graph</button>
+          <button id="btnExportLocal" class="secondary">Export local data to CSV</button>
+          <button id="btnClearLocal" class="danger">Clear local demo data</button>
+        </div>
+
+        <div class="table-wrap">
+          <table id="ideasTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Impact</th>
+                <th>Feasibility</th>
+                <th>Submitted</th>
+              </tr>
+            </thead>
+            <tbody><!-- Populated by app.js --></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Summary -->
+    <section id="summary" class="view">
+      <div class="grid-two">
+        <div class="card">
+          <h2>Top categories</h2>
+          <ul id="topCategories" class="pill-list"><!-- Populated by app.js --></ul>
+          <canvas id="categoryChart" width="400" height="220" aria-label="Category chart"></canvas>
+        </div>
+
+        <div class="card">
+          <h2>Word cloud (keywords)</h2>
+          <p class="small">Generated from idea titles and descriptions.</p>
+          <canvas id="wordCloud" width="400" height="300" aria-label="Word cloud"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Impact vs feasibility matrix</h2>
+        <p class="small">Quick view to shortlist high-impact, high-feasibility ideas.</p>
+        <canvas id="matrixChart" width="800" height="300" aria-label="Matrix"></canvas>
+      </div>
+
+      <div class="card">
+        <h2>Optional Power BI embed</h2>
+        <p>Replace placeholders below with your workspace, report ID, and embed token to show Microsoft-native dashboards.</p>
+        <div id="powerBiContainer" class="powerbi-container"><!-- Power BI renders here if configured --></div>
+        <!-- In app.js, configure POWER_BI placeholders to embed your report. -->
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <p>Built for colleges using Microsoft apps: Forms, SharePoint/Excel, Power BI, Copilot, Teams.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
